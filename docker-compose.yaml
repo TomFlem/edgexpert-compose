@@ -146,6 +146,10 @@ services:
       source: license-data
       target: /edgexpert/licenses/
       read_only: true
+    - type: bind
+      source: /etc/hosts
+      target: /etc/hosts
+      read_only: true
     depends_on:
     - export-client
     - license-provisioning
