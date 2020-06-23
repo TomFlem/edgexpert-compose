@@ -264,7 +264,7 @@ services:
         max-size: 10mb
         max-file: '20'
   edgexpert-provisioning:
-    image: sys_mgmt_demo-edgexpert-provisioning:0.1
+    image: iotechsys/sys-mgmt-demo-prov:0.1
     deploy:
       restart_policy:
         condition: on-failure
@@ -279,7 +279,7 @@ services:
     - device-virtual
     - xpert-manager
   license-provisioning:
-    image: sys_mgmt_demo-edgexpert-license-provisioning:0.1
+    image: iotechsys/sys-mgmt-demo-license-prov:0.1
     volumes:
     - type: volume
       source: license-data
