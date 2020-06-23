@@ -146,14 +146,6 @@ services:
       source: license-data
       target: /edgexpert/licenses/
       read_only: true
-    - type: bind
-      source: /etc/hosts
-      target: /etc/hosts
-      read_only: true
-    - type: bind
-      source: /etc/nsswitch.conf
-      target: /etc/nsswitch.conf
-      read_only: true
     depends_on:
     - export-client
     - license-provisioning
@@ -272,7 +264,7 @@ services:
         max-size: 10mb
         max-file: '20'
   edgexpert-provisioning:
-    image: iotechsys/sys-mgmt-demo-prov:0.1 #sys_mgmt_demo-edgexpert-provisioning:0.1
+    image: sys_mgmt_demo-edgexpert-provisioning:0.1
     deploy:
       restart_policy:
         condition: on-failure
@@ -287,7 +279,7 @@ services:
     - device-virtual
     - xpert-manager
   license-provisioning:
-    image: iotechsys/sys-mgmt-demo-license-prov:0.1 #sys_mgmt_demo-edgexpert-license-provisioning:0.1
+    image: sys_mgmt_demo-edgexpert-license-provisioning:0.1
     volumes:
     - type: volume
       source: license-data
