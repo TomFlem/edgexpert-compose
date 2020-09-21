@@ -1,0 +1,52 @@
+networks:
+  edgex-network:
+    driver: bridge
+services:
+  mqtt-broker:
+    container_name: mqtt-broker
+    hostname: mqtt-broker
+    image: iotechsys/edgexpert-mqtt-broker:1.7
+    logging:
+      driver: json-file
+      options:
+        max-file: '20'
+        max-size: 10mb
+    networks:
+      edgex-network: null
+    ports:
+    - published: 1883
+      target: 1883
+  nodered:
+    container_name: nodered
+    hostname: edgex-nodered
+    image: iotechsys/edgexpert-nodered:0.19.0
+    logging:
+      driver: json-file
+      options:
+        max-file: '20'
+        max-size: 10mb
+    networks:
+      edgex-network:
+        aliases:
+        - edgex-nodered
+    ports:
+    - published: 1880
+      target: 1880
+    volumes:
+    - source: nodered-data
+      target: /data
+      type: volume
+    extra_hosts:
+      - "edgex-core-command:172.16.238.10"
+version: '3.7'
+volumes:
+  consul-config: {}
+  consul-data: {}
+  db-data: {}
+  export-data: {}
+  grafana-data: {}
+  license-data: {}
+  nodered-data: {}
+  portainer-data: {}
+  profile-modeling-data: {}
+  xpert-manager-data: {}

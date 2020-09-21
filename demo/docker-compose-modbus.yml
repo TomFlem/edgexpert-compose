@@ -1,0 +1,70 @@
+networks:
+  edgex-network:
+    driver: bridge
+services:
+  device-modbus:
+    command: '--confdir=res  '
+    container_name: device-modbus
+    entrypoint: /device-modbus
+    environment:
+      Clients_Command_Host: 172.16.238.10
+      Clients_CoreData_Host: 172.16.238.10
+      Clients_Data_Host: 172.16.238.10
+      Clients_Logging_Host: 172.16.238.10
+      Clients_Metadata_Host: 172.16.238.10
+      Clients_Notifications_Host: 172.16.238.10
+      Clients_RulesEngine_Host: kuiper
+      Clients_Scheduler_Host: 172.16.238.10
+      Clients_VirtualDevice_Host: 172.16.238.10
+      Databases_Primary_Host: 172.16.238.10
+      EDGEXPERT_LICENSE_PATH: /edgexpert/licenses/
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      Logging_EnableRemote: "false"
+      Registry_Host: node1
+      Service_Host: 172.16.238.11
+      edgex_registry_retry_count: 5
+      edgex_registry_retry_wait: 5
+    hostname: device-modbus
+    image: iotechsys/edgexpert-device-modbus:1.7
+    logging:
+      driver: json-file
+      options:
+        max-file: '20'
+        max-size: 10mb
+    networks:
+      edgex-network: null
+    ports:
+    - published: 49991
+      target: 49991
+    volumes:
+    - license-data:/edgexpert/licenses:ro
+    - /etc/hosts:/etc/hosts:ro
+    deploy:
+      restart_policy:
+        condition: on-failure
+    depends_on:
+    - license-provisioning
+
+  license-provisioning:
+    image: iotechsys/sys-mgmt-demo-license-prov:1.0-ba
+    volumes:
+    - type: volume
+      source: license-data
+      target: /edgexpert/licenses/
+      read_only: false
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+version: '3.7'
+volumes:
+  consul-config: {}
+  consul-data: {}
+  db-data: {}
+  export-data: {}
+  grafana-data: {}
+  license-data: {}
+  nodered-data: {}
+  portainer-data: {}
+  profile-modeling-data: {}
+  xpert-manager-data: {}

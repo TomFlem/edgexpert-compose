@@ -1,0 +1,514 @@
+networks:
+  edgex-network:
+    driver: bridge
+services:
+  consul:
+    container_name: consul
+    environment:
+      EDGEX_DB: redis
+      EDGEX_SECURE: "false"
+    hostname: consul
+    image: iotechsys/edgexpert-consul:1.7
+    logging:
+      driver: json-file
+      options:
+        max-file: '20'
+        max-size: 10mb
+    networks:
+      edgex-network:
+        aliases:
+        - edgex-core-consul
+    ports:
+    - published: 8400
+      target: 8400
+    - published: 8500
+      target: 8500
+    volumes:
+    - consul-config:/consul/config:z
+    - consul-data:/consul/data:z
+    deploy:
+      restart_policy:
+        condition: on-failure
+  core-command:
+    command: '--confdir=res  '
+    container_name: core-command
+    depends_on:
+    - consul
+    - core-metadata
+    - redis
+    entrypoint: /core-command
+    environment:
+      Clients_Command_Host: edgex-core-command
+      Clients_CoreData_Host: edgex-core-data
+      Clients_Data_Host: edgex-core-data
+      Clients_Logging_Host: edgex-support-logging
+      Clients_Metadata_Host: edgex-core-metadata
+      Clients_Notifications_Host: edgex-support-notifications
+      Clients_RulesEngine_Host: kuiper
+      Clients_Scheduler_Host: edgex-support-scheduler
+      Clients_VirtualDevice_Host: device-virtual
+      Databases_Primary_Host: edgex-redis
+      EDGEXPERT_LICENSE_PATH: /edgexpert/licenses/
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      Logging_EnableRemote: "false"
+      Registry_Host: edgex-core-consul
+      Service_Host: core-command
+      edgex_registry_retry_count: 5
+      edgex_registry_retry_wait: 5
+    hostname: core-command
+    image: iotechsys/edgexpert-core-command:1.7
+    logging:
+      driver: json-file
+      options:
+        max-file: '20'
+        max-size: 10mb
+    networks:
+      edgex-network:
+        aliases:
+        - edgex-core-command
+    ports:
+    - published: 48082
+      target: 48082
+    volumes:
+    - license-data:/edgexpert/licenses:ro
+    deploy:
+      restart_policy:
+        condition: on-failure
+  core-data:
+    command: '--confdir=res  '
+    container_name: core-data
+    depends_on:
+    - consul
+    - core-metadata
+    - redis
+    entrypoint: /core-data
+    environment:
+      Clients_Command_Host: edgex-core-command
+      Clients_CoreData_Host: edgex-core-data
+      Clients_Data_Host: edgex-core-data
+      Clients_Logging_Host: edgex-support-logging
+      Clients_Metadata_Host: edgex-core-metadata
+      Clients_Notifications_Host: edgex-support-notifications
+      Clients_RulesEngine_Host: kuiper
+      Clients_Scheduler_Host: edgex-support-scheduler
+      Clients_VirtualDevice_Host: device-virtual
+      Databases_Primary_Host: edgex-redis
+      EDGEXPERT_LICENSE_PATH: /edgexpert/licenses/
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      Logging_EnableRemote: "false"
+      Registry_Host: edgex-core-consul
+      Service_Host: core-data
+      edgex_registry_retry_count: 5
+      edgex_registry_retry_wait: 5
+    hostname: core-data
+    image: iotechsys/edgexpert-core-data:1.7
+    logging:
+      driver: json-file
+      options:
+        max-file: '20'
+        max-size: 10mb
+    networks:
+      edgex-network:
+        aliases:
+        - edgex-core-data
+    ports:
+    - published: 48080
+      target: 48080
+    - published: 5563
+      target: 5563
+    volumes:
+    - license-data:/edgexpert/licenses:ro
+    deploy:
+      restart_policy:
+        condition: on-failure
+  core-metadata:
+    command: '--confdir=res  '
+    container_name: core-metadata
+    depends_on:
+    - consul
+    - redis
+    - support-notifications
+    entrypoint: /core-metadata
+    environment:
+      Clients_Command_Host: edgex-core-command
+      Clients_CoreData_Host: edgex-core-data
+      Clients_Data_Host: edgex-core-data
+      Clients_Logging_Host: edgex-support-logging
+      Clients_Metadata_Host: edgex-core-metadata
+      Clients_Notifications_Host: edgex-support-notifications
+      Clients_RulesEngine_Host: kuiper
+      Clients_Scheduler_Host: edgex-support-scheduler
+      Clients_VirtualDevice_Host: device-virtual
+      Databases_Primary_Host: edgex-redis
+      EDGEXPERT_LICENSE_PATH: /edgexpert/licenses/
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      Logging_EnableRemote: "false"
+      Notifications_PostDeviceChanges: "false"
+      Notifications_Sender: core-metadata
+      Registry_Host: edgex-core-consul
+      Service_Host: core-metadata
+      edgex_registry_retry_count: 5
+      edgex_registry_retry_wait: 5
+    hostname: core-metadata
+    image: iotechsys/edgexpert-core-metadata:1.7
+    logging:
+      driver: json-file
+      options:
+        max-file: '20'
+        max-size: 10mb
+    networks:
+      edgex-network:
+        aliases:
+        - edgex-core-metadata
+    ports:
+    - published: 48081
+      target: 48081
+    volumes:
+    - license-data:/edgexpert/licenses:ro
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  export-client:
+    command: '--confdir=res  '
+    container_name: export-client
+    depends_on:
+    - core-data
+    entrypoint: /export-client
+    environment:
+      Clients_Command_Host: edgex-core-command
+      Clients_CoreData_Host: edgex-core-data
+      Clients_Data_Host: edgex-core-data
+      Clients_Distro_Host: export-distro
+      Clients_Logging_Host: edgex-support-logging
+      Clients_Metadata_Host: edgex-core-metadata
+      Clients_Notifications_Host: edgex-support-notifications
+      Clients_RulesEngine_Host: kuiper
+      Clients_Scheduler_Host: edgex-support-scheduler
+      Clients_VirtualDevice_Host: device-virtual
+      Databases_Primary_Host: edgex-redis
+      EDGEXPERT_LICENSE_PATH: /edgexpert/licenses/
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      Logging_EnableRemote: "false"
+      Registry_Host: edgex-core-consul
+      Service_Host: export-client
+      edgex_registry_retry_count: 5
+      edgex_registry_retry_wait: 5
+    hostname: export-client
+    image: iotechsys/edgexpert-export-client:1.7
+    logging:
+      driver: json-file
+      options:
+        max-file: '20'
+        max-size: 10mb
+    networks:
+      edgex-network:
+        aliases:
+        - edgex-export-client
+    ports:
+    - published: 48071
+      target: 48071
+    volumes:
+    - license-data:/edgexpert/licenses:ro
+    deploy:
+      restart_policy:
+        condition: on-failure
+  export-distro:
+    command: '--confdir=res  '
+    container_name: export-distro
+    depends_on:
+    - export-client
+    entrypoint: /export-distro
+    environment:
+      Certificates_AWS_Cert: dummy.crt
+      Certificates_AWS_Key: dummy.key
+      Certificates_MQTTS_Cert: dummy.crt
+      Certificates_MQTTS_Key: dummy.key
+      Clients_Command_Host: edgex-core-command
+      Clients_CoreData_Host: edgex-core-data
+      Clients_Data_Host: edgex-core-data
+      Clients_Export_Host: export-client
+      Clients_Logging_Host: edgex-support-logging
+      Clients_Metadata_Host: edgex-core-metadata
+      Clients_Notifications_Host: edgex-support-notifications
+      Clients_RulesEngine_Host: kuiper
+      Clients_Scheduler_Host: edgex-support-scheduler
+      Clients_VirtualDevice_Host: device-virtual
+      Databases_Primary_Host: edgex-redis
+      EDGEXPERT_LICENSE_PATH: /edgexpert/licenses/
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      Logging_EnableRemote: "false"
+      MessageQueue_Host: core-data
+      Registry_Host: edgex-core-consul
+      Service_Host: export-distro
+      edgex_registry_retry_count: 5
+      edgex_registry_retry_wait: 5
+    hostname: export-distro
+    image: iotechsys/edgexpert-export-distro:1.7
+    logging:
+      driver: json-file
+      options:
+        max-file: '20'
+        max-size: 10mb
+    networks:
+      edgex-network:
+        aliases:
+        - edgex-export-distro
+    ports:
+    - published: 48070
+      target: 48070
+    volumes:
+    - export-data:/export/keys:rw
+    - license-data:/edgexpert/licenses:ro
+    - /etc/hosts:/etc/hosts:ro
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+
+  redis:
+    command: redis-server /etc/redis/redis.conf
+    container_name: redis
+    environment:
+      Clients_Command_Host: edgex-core-command
+      Clients_CoreData_Host: edgex-core-data
+      Clients_Data_Host: edgex-core-data
+      Clients_Logging_Host: edgex-support-logging
+      Clients_Metadata_Host: edgex-core-metadata
+      Clients_Notifications_Host: edgex-support-notifications
+      Clients_RulesEngine_Host: kuiper
+      Clients_Scheduler_Host: edgex-support-scheduler
+      Clients_VirtualDevice_Host: device-virtual
+      Databases_Primary_Host: edgex-redis
+      EDGEXPERT_LICENSE_PATH: /edgexpert/licenses/
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      Logging_EnableRemote: "false"
+      Registry_Host: edgex-core-consul
+      edgex_registry_retry_count: 5
+      edgex_registry_retry_wait: 5
+    hostname: redis
+    image: iotechsys/edgexpert-redis:1.7
+    logging:
+      driver: json-file
+      options:
+        max-file: '20'
+        max-size: 10mb
+    networks:
+      edgex-network:
+        aliases:
+        - edgex-redis
+    ports:
+    - published: 6379
+      target: 6379
+    volumes:
+    - db-data:/data:z
+    deploy:
+      restart_policy:
+        condition: on-failure
+  support-logging:
+    command: '--confdir=res  '
+    container_name: support-logging
+    depends_on:
+    - consul
+    entrypoint: /support-logging
+    environment:
+      Clients_Command_Host: edgex-core-command
+      Clients_CoreData_Host: edgex-core-data
+      Clients_Data_Host: edgex-core-data
+      Clients_Logging_Host: edgex-support-logging
+      Clients_Metadata_Host: edgex-core-metadata
+      Clients_Notifications_Host: edgex-support-notifications
+      Clients_RulesEngine_Host: kuiper
+      Clients_Scheduler_Host: edgex-support-scheduler
+      Clients_VirtualDevice_Host: device-virtual
+      Databases_Primary_Host: edgex-redis
+      Databases_Primary_Type: file
+      EDGEXPERT_LICENSE_PATH: /edgexpert/licenses/
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      Logging_EnableRemote: "false"
+      Logging_File: /edgex/log/edgex-support-logging.log
+      Registry_Host: edgex-core-consul
+      Service_Host: support-logging
+      Writable_Persistence: file
+      edgex_registry_retry_count: 5
+      edgex_registry_retry_wait: 5
+    hostname: support-logging
+    image: iotechsys/edgexpert-support-logging:1.7
+    networks:
+      edgex-network:
+        aliases:
+        - edgex-support-logging
+    ports:
+    - published: 48061
+      target: 48061
+    volumes:
+    - license-data:/edgexpert/licenses:ro
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  support-notifications:
+    command: '--confdir=res  '
+    container_name: support-notifications
+    depends_on:
+    - consul
+    - redis
+    entrypoint: /support-notifications
+    environment:
+      Clients_Command_Host: edgex-core-command
+      Clients_CoreData_Host: edgex-core-data
+      Clients_Data_Host: edgex-core-data
+      Clients_Logging_Host: edgex-support-logging
+      Clients_Metadata_Host: edgex-core-metadata
+      Clients_Notifications_Host: edgex-support-notifications
+      Clients_RulesEngine_Host: kuiper
+      Clients_Scheduler_Host: edgex-support-scheduler
+      Clients_VirtualDevice_Host: device-virtual
+      Databases_Primary_Host: edgex-redis
+      EDGEXPERT_LICENSE_PATH: /edgexpert/licenses/
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      Logging_EnableRemote: "false"
+      Registry_Host: edgex-core-consul
+      Service_Host: support-notifications
+      edgex_registry_retry_count: 5
+      edgex_registry_retry_wait: 5
+    hostname: support-notifications
+    image: iotechsys/edgexpert-support-notifications:1.7
+    logging:
+      driver: json-file
+      options:
+        max-file: '20'
+        max-size: 10mb
+    networks:
+      edgex-network:
+        aliases:
+        - edgex-support-notifications
+    ports:
+    - published: 48060
+      target: 48060
+    volumes:
+    - license-data:/edgexpert/licenses:ro
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  support-scheduler:
+    command: '--confdir=res  '
+    container_name: support-scheduler
+    depends_on:
+    - consul
+    - redis
+    entrypoint: /support-scheduler
+    environment:
+      Clients_Command_Host: edgex-core-command
+      Clients_CoreData_Host: edgex-core-data
+      Clients_Data_Host: edgex-core-data
+      Clients_Logging_Host: edgex-support-logging
+      Clients_Metadata_Host: edgex-core-metadata
+      Clients_Notifications_Host: edgex-support-notifications
+      Clients_RulesEngine_Host: kuiper
+      Clients_Scheduler_Host: edgex-support-scheduler
+      Clients_VirtualDevice_Host: device-virtual
+      Databases_Primary_Host: edgex-redis
+      EDGEXPERT_LICENSE_PATH: /edgexpert/licenses/
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      IntervalActions_ScrubAged_Host: core-data
+      IntervalActions_ScrubPushed_Host: core-data
+      Logging_EnableRemote: "false"
+      Registry_Host: edgex-core-consul
+      Service_Host: support-scheduler
+      edgex_registry_retry_count: 5
+      edgex_registry_retry_wait: 5
+    hostname: support-scheduler
+    image: iotechsys/edgexpert-support-scheduler:1.7
+    logging:
+      driver: json-file
+      options:
+        max-file: '20'
+        max-size: 10mb
+    networks:
+      edgex-network:
+        aliases:
+        - edgex-support-scheduler
+    ports:
+    - published: 48085
+      target: 48085
+    volumes:
+    - license-data:/edgexpert/licenses:ro
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  xpert-manager:
+    container_name: xpert-manager
+    depends_on:
+    - core-command
+    - core-data
+    - core-metadata
+    entrypoint: /root/go-ui-server
+    environment:
+      Clients_Command_Host: edgex-core-command
+      Clients_CoreData_Host: edgex-core-data
+      Clients_Data_Host: edgex-core-data
+      Clients_Logging_Host: edgex-support-logging
+      Clients_Metadata_Host: edgex-core-metadata
+      Clients_Notifications_Host: edgex-support-notifications
+      Clients_RulesEngine_Host: kuiper
+      Clients_Scheduler_Host: edgex-support-scheduler
+      Clients_VirtualDevice_Host: device-virtual
+      Databases_Primary_Host: edgex-redis
+      EDGEXPERT_LICENSE_PATH: /edgexpert/licenses/
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      Logging_EnableRemote: "false"
+      Registry_Host: edgex-core-consul
+      edgex_registry_retry_count: 5
+      edgex_registry_retry_wait: 5
+    hostname: xpert-manager
+    image: iotechsys/edgexpert-iotech-manager:1.7
+    logging:
+      driver: json-file
+      options:
+        max-file: '20'
+        max-size: 10mb
+    networks:
+      edgex-network: null
+    ports:
+    - published: 8080
+      target: 8080
+    volumes:
+    - xpert-manager-data:/xpert-manager/data:rw
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  license-provisioning:
+    image: iotechsys/sys-mgmt-demo-license-prov:1.0-ba
+    volumes:
+    - type: volume
+      source: license-data
+      target: /edgexpert/licenses/
+      read_only: false
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  lua:
+    image: iotechsys/edgexpert-demo-lua:1.0
+    depends_on:
+    - core-metadata
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+version: '3.7'
+volumes:
+  consul-config: {}
+  consul-data: {}
+  db-data: {}
+  export-data: {}
+  grafana-data: {}
+  license-data: {}
+  nodered-data: {}
+  portainer-data: {}
+  profile-modeling-data: {}
+  xpert-manager-data: {}
