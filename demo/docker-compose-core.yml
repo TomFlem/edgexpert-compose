@@ -28,7 +28,9 @@ services:
     - consul-data:/consul/data:z
     deploy:
       restart_policy:
-        condition: on-failure
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
   core-command:
     command: '--confdir=res  '
     container_name: core-command
@@ -73,7 +75,9 @@ services:
     - license-data:/edgexpert/licenses:ro
     deploy:
       restart_policy:
-        condition: on-failure
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
   core-data:
     command: '--confdir=res  '
     container_name: core-data
@@ -120,7 +124,9 @@ services:
     - license-data:/edgexpert/licenses:ro
     deploy:
       restart_policy:
-        condition: on-failure
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
   core-metadata:
     command: '--confdir=res  '
     container_name: core-metadata
@@ -167,7 +173,9 @@ services:
     - license-data:/edgexpert/licenses:ro
     deploy:
       restart_policy:
-        condition: on-failure
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
 
   export-client:
     command: '--confdir=res  '
@@ -212,7 +220,9 @@ services:
     - license-data:/edgexpert/licenses:ro
     deploy:
       restart_policy:
-        condition: on-failure
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
   export-distro:
     command: '--confdir=res  '
     container_name: export-distro
@@ -263,8 +273,9 @@ services:
     - /etc/hosts:/etc/hosts:ro
     deploy:
       restart_policy:
-        condition: on-failure
-
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
 
   redis:
     command: redis-server /etc/redis/redis.conf
@@ -304,7 +315,9 @@ services:
     - db-data:/data:z
     deploy:
       restart_policy:
-        condition: on-failure
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
   support-logging:
     command: '--confdir=res  '
     container_name: support-logging
@@ -345,7 +358,9 @@ services:
     - license-data:/edgexpert/licenses:ro
     deploy:
       restart_policy:
-        condition: on-failure
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
 
   support-notifications:
     command: '--confdir=res  '
@@ -390,7 +405,9 @@ services:
     - license-data:/edgexpert/licenses:ro
     deploy:
       restart_policy:
-        condition: on-failure
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
 
   support-scheduler:
     command: '--confdir=res  '
@@ -437,7 +454,9 @@ services:
     - license-data:/edgexpert/licenses:ro
     deploy:
       restart_policy:
-        condition: on-failure
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
 
   xpert-manager:
     container_name: xpert-manager
@@ -479,7 +498,9 @@ services:
     - xpert-manager-data:/xpert-manager/data:rw
     deploy:
       restart_policy:
-        condition: on-failure
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
 
   license-provisioning:
     image: iotechsys/sys-mgmt-demo-license-prov:1.0-ba
@@ -490,15 +511,22 @@ services:
       read_only: false
     deploy:
       restart_policy:
-        condition: on-failure
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
 
   lua:
     image: iotechsys/edgexpert-demo-lua:1.0
     depends_on:
     - core-metadata
+    - core-data
+    - core-command
+    - redis
     deploy:
       restart_policy:
-        condition: on-failure
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
 
 version: '3.7'
 volumes:

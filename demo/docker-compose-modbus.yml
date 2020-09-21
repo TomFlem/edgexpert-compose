@@ -41,7 +41,9 @@ services:
     - /etc/hosts:/etc/hosts:ro
     deploy:
       restart_policy:
-        condition: on-failure
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
     depends_on:
     - license-provisioning
 
@@ -54,7 +56,9 @@ services:
       read_only: false
     deploy:
       restart_policy:
-        condition: on-failure
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
 
 version: '3.7'
 volumes:

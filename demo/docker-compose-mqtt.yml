@@ -16,6 +16,11 @@ services:
     ports:
     - published: 1883
       target: 1883
+    deploy:
+      restart_policy:
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
   nodered:
     container_name: nodered
     hostname: edgex-nodered
@@ -38,6 +43,11 @@ services:
       type: volume
     extra_hosts:
       - "edgex-core-command:172.16.238.10"
+    deploy:
+      restart_policy:
+        deplay: 5s
+        max_attempts: 5
+        window: 120s
 version: '3.7'
 volumes:
   consul-config: {}
