@@ -28,7 +28,7 @@ services:
     - consul-data:/consul/data:z
     deploy:
       restart_policy:
-        deplay: 5s
+        delay: 5s
         max_attempts: 5
         window: 120s
   core-command:
@@ -75,7 +75,7 @@ services:
     - license-data:/edgexpert/licenses:ro
     deploy:
       restart_policy:
-        deplay: 5s
+        delay: 5s
         max_attempts: 5
         window: 120s
   core-data:
@@ -124,7 +124,7 @@ services:
     - license-data:/edgexpert/licenses:ro
     deploy:
       restart_policy:
-        deplay: 5s
+        delay: 5s
         max_attempts: 5
         window: 120s
   core-metadata:
@@ -173,7 +173,7 @@ services:
     - license-data:/edgexpert/licenses:ro
     deploy:
       restart_policy:
-        deplay: 5s
+        delay: 5s
         max_attempts: 5
         window: 120s
 
@@ -220,7 +220,7 @@ services:
     - license-data:/edgexpert/licenses:ro
     deploy:
       restart_policy:
-        deplay: 5s
+        delay: 5s
         max_attempts: 5
         window: 120s
   export-distro:
@@ -273,7 +273,7 @@ services:
     - /etc/hosts:/etc/hosts:ro
     deploy:
       restart_policy:
-        deplay: 5s
+        delay: 5s
         max_attempts: 5
         window: 120s
 
@@ -315,7 +315,7 @@ services:
     - db-data:/data:z
     deploy:
       restart_policy:
-        deplay: 5s
+        delay: 5s
         max_attempts: 5
         window: 120s
   support-logging:
@@ -358,7 +358,7 @@ services:
     - license-data:/edgexpert/licenses:ro
     deploy:
       restart_policy:
-        deplay: 5s
+        delay: 5s
         max_attempts: 5
         window: 120s
 
@@ -405,7 +405,7 @@ services:
     - license-data:/edgexpert/licenses:ro
     deploy:
       restart_policy:
-        deplay: 5s
+        delay: 5s
         max_attempts: 5
         window: 120s
 
@@ -454,7 +454,7 @@ services:
     - license-data:/edgexpert/licenses:ro
     deploy:
       restart_policy:
-        deplay: 5s
+        delay: 5s
         max_attempts: 5
         window: 120s
 
@@ -498,7 +498,7 @@ services:
     - xpert-manager-data:/xpert-manager/data:rw
     deploy:
       restart_policy:
-        deplay: 5s
+        delay: 5s
         max_attempts: 5
         window: 120s
 
@@ -511,7 +511,7 @@ services:
       read_only: false
     deploy:
       restart_policy:
-        deplay: 5s
+        delay: 5s
         max_attempts: 5
         window: 120s
 
@@ -524,7 +524,7 @@ services:
     - redis
     deploy:
       restart_policy:
-        deplay: 5s
+        delay: 5s
         max_attempts: 5
         window: 120s
 

@@ -18,7 +18,7 @@ services:
       target: 1883
     deploy:
       restart_policy:
-        deplay: 5s
+        delay: 5s
         max_attempts: 5
         window: 120s
   nodered:
@@ -45,7 +45,7 @@ services:
       - "edgex-core-command:172.16.238.10"
     deploy:
       restart_policy:
-        deplay: 5s
+        delay: 5s
         max_attempts: 5
         window: 120s
 version: '3.7'
