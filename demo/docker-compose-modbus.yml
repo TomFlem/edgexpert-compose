@@ -1,6 +1,6 @@
 networks:
   edgex-network:
-    driver: bridge
+    driver: overlay
 services:
   device-modbus:
     command: '--confdir=res  '
