@@ -286,7 +286,7 @@ services:
       Registry_Host: edgex-core-consul
       edgex_registry_retry_count: 5
       edgex_registry_retry_wait: 5
-    hostname: redis
+    hostname: edgex-redis
     image: iotechsys/edgexpert-redis:1.7
     logging:
       driver: json-file
